@@ -1,0 +1,20 @@
+jogador.
+name
+senha
+dt_cadastro
+qtd_dinheiro
+qtd_pontos
+dt_login
+situacao
+
+patente.
+cod 
+nome 
+cor 
+dt_cria 
+logo
+qtd_min
+
+validação menu
+alerts e avisos
+ref de objeto

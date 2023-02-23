@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+
+      <meta charset="utf-8">
+      <title>Trabalho de Programação</title>
+
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.8/vue.js"></script>      
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+      <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+      <script src="https://unpkg.com/vuelidate@0.7.4/dist/vuelidate.min.js"></script>
+      <script src="https://unpkg.com/vuelidate@0.7.4/dist/validators.min.js"></script>
+      
+      <link href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" />
+      <link href="css/style.css" rel="stylesheet" type="text/css">
+
+    </head> 
+
+    <body> 
+       
+      <div class="container-fluid">
+        <div class="row">
+          <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+              <ul class="nav navbar-nav">
+                <li class="active"><a href="#menu" data-toggle="pill">Menu</a></li>
+                <li><a href="#jogador" data-toggle="pill">Jogador</a></li>
+                <li><a href="#patente" data-toggle="pill">Patente</a></li>
+              </ul>
+            </div>
+          </nav>
+          <div class="col-xs-9">
+            <div class="tab-content" id="app">
+              <div id="menu" class="tab-pane fade in active">
+
+                <h3>Jogador-Patente</h3>
+
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Jogador</th>
+                      <th scope="col">Patente</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(c, indice) in couples">                                                
+                      <td>{{c.jogador}}</td>
+                      <td>{{c.patente}}</td>
+                      <td><button v-on:click="editCouple(indice)" class="btn" type="button">Alterar</button></td>
+                      <td><button v-on:click="remCouple(indice)" class="btn" type="button">Remover</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <h3>Criar nova relação jogador-patente</h3>
+
+                <form>
+
+                  <div class="form-group">
+                    <label>Jogador</label>
+                    <div class="error" v-if="!$v.novo_couple.jogador.required">Campo obrigatório</div>
+                    <select v-model="$v.novo_couple.jogador.$model" class="form-control">
+                      <option v-for="(j, indice) in jogadores" id="couple.jogador">{{j.name}}</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Patente</label>
+                    <div class="error" v-if="!$v.novo_couple.patente.required">Campo obrigatório</div>
+                    <select v-model="$v.novo_couple.patente.$model" class="form-control">
+                      <option v-for="(p, indice) in patentes" id="couple.patente">{{p.nome}}</option>
+                    </select>
+                  </div>
+
+                  <button @click="addCouple($v)" class="btn" type="button">Salvar</button>
+                  <button @click="cleanFormularioCouple" class="btn" type="button">Limpar</button>
+
+                </form>
+              </div>
+
+              <div id="jogador" class="tab-pane fade">
+                
+                <h3>Jogadores</h3>
+
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Nickname</th>
+                      <th scope="col">Data de cadastro</th>
+                      <th scope="col">Quantidade de dinheiro</th>
+                      <th scope="col">Quantidade de pontos</th>
+                      <th scope="col">Data do último login</th>
+                      <th scope="col">Situação</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(j, indice) in jogadores">                                                
+                      <td>{{j.name}}</td>
+                      <td>{{j.dt_cadastro | formataData}}</td>
+                      <td>{{j.qtd_dinheiro}}</td>
+                      <td>{{j.qtd_pontos}}</td>
+                      <td>{{j.dt_login | formataData}}</td>
+                      <td>{{j.situacao}}</td>
+                      <td><button v-on:click="editJogador(indice)" class="btn" type="button">Alterar</button></td>
+                      <td><button v-on:click="remJogador(indice)" class="btn" type="button">Remover</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <h3>Cadastrar novo jogador</h3>
+
+                <form>
+                  <div class="form-group">
+                    <label>Nickname</label>
+                    <div class="error" v-if="!$v.novo_jogador.name.required">Campo obrigatório</div>
+                    <div class="error" v-if="!$v.novo_jogador.name.maxLength">Máximo de {{$v.novo_jogador.name.$params.maxLength.max}} caracteres</div>
+                    <input type="text" v-model.trim="$v.novo_jogador.name.$model" class="form-control" id="jogador.name">
+                  </div>
+                  <div class="form-group">
+                    <label>Senha</label>
+                    <div class="error" v-if="!$v.novo_jogador.senha.required">Campo obrigatório</div>
+                    <div class="error" v-if="!$v.novo_jogador.senha.minLength">Mínimo de 4 caracteres</div>
+                    <input type="password" v-model.trim="$v.novo_jogador.senha.$model" class="form-control" id="jogador.senha">
+                  </div>
+                  <div class="form-group">
+                    <label>Data de cadastro</label>
+                    <div class="error" v-if="!$v.novo_jogador.dt_cadastro.required">Campo obrigatório</div>
+                    <input type="date" v-model.trim="$v.novo_jogador.dt_cadastro.$model"dt_cadastro class="form-control" id="jogador.dt_cadastro">
+                  </div>
+                  <div class="form-group">
+                    <label>Quantidade de dinheiro</label>
+                    <div class="error" v-if="!$v.novo_jogador.qtd_dinheiro.required">Campo obrigatório</div>
+                    <input type="number" v-model.trim="$v.novo_jogador.qtd_dinheiro.$model" class="form-control" id="jogador.qtd_dinheiro" step="0.01">
+                    </div>
+                  <div class="form-group">
+                    <label>Quantidade de pontos</label>
+                    <div class="error" v-if="!$v.novo_jogador.qtd_pontos.required">Campo obrigatório</div>
+                    <input type="number" v-model.trim="$v.novo_jogador.qtd_pontos.$model" class="form-control" id="jogador.qtd_pontos">
+                  </div>
+                  <div class="form-group">
+                    <label>Data do último login</label>
+                    <div class="error" v-if="!$v.novo_jogador.dt_login.required">Campo obrigatório</div>
+                    <input type="date" v-model.trim="$v.novo_jogador.dt_login.$model" class="form-control" id="jogador.dt_login">
+                  </div>
+                  <div class="form-group">
+                    <label>Situação</label>
+                    <div class="error" v-if="!$v.novo_jogador.situacao.required">Campo obrigatório</div>
+                    <input type="text" v-model.trim="$v.novo_jogador.situacao.$model" class="form-control" id="jogador.situacao" maxlength="1">
+                  </div>
+
+                  <button @click="addJogador($v)" class="btn" type="button">Salvar</button>
+                  <button @click="cleanFormularioJogador" class="btn" type="button">Limpar</button>
+                </form>
+              </div>
+
+              <div id="patente" class="tab-pane fade">
+
+                <h3>Patentes</h3>
+
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Código</th>
+                      <th scope="col">Nome</th>
+                      <th scope="col">Cor</th>
+                      <th scope="col">Data de criação</th>
+                      <th scope="col">Logotipo</th>
+                      <th scope="col">Quantidade mínima de pontos</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(p, indice) in patentes">                                                
+                      <td>{{p.cod}}</td>
+                      <td>{{p.nome}}</td>
+                      <td>{{p.cor}}</td>
+                      <td>{{p.dt_cria | formataData}}</td>
+                      <td>{{p.logo}}</td>
+                      <td>{{p.qtd_min}}</td>
+                      <td><button v-on:click="editPatente(indice)" class="btn" type="button">Alterar</button></td>
+                      <td><button v-on:click="remPatente(indice)" class="btn" type="button">Remover</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <h3>Cadastrar nova patente</h3>
+
+                <form>
+                  <div class="form-group">
+                    <label>Código</label>
+                    <input type="number" v-model.trim="nova_patente.cod" class="form-control" id="patente.cod" disabled>
+                  </div>
+                  <div class="form-group">
+                    <label>Nome</label>
+                    <div class="error" v-if="!$v.nova_patente.nome.required">Campo obrigatório</div>
+                    <input type="text" v-model.trim="$v.nova_patente.nome.$model" class="form-control" id="patente.nome">
+                  </div>
+                  <div class="form-group">
+                    <label>Cor</label>
+                    <div class="error" v-if="!$v.nova_patente.cor.required">Campo obrigatório</div>
+                    <input type="text" v-model.trim="$v.nova_patente.cor.$model" class="form-control" id="patente.cor">
+                  </div>
+                  <div class="form-group">
+                    <label>Data de criação</label>
+                    <div class="error" v-if="!$v.nova_patente.dt_cria.required">Campo obrigatório</div>
+                    <div class="error" v-if="!$v.nova_patente.dt_cria.maxValue">A data não pode ser futura</div>
+                    <input type="date" v-model.trim="$v.nova_patente.dt_cria.$model" class="form-control" id="patente.dt_cria">
+                  </div>
+                  <div class="form-group">
+                    <label>Logotipo</label>
+                    <div class="error" v-if="!$v.nova_patente.logo.required">Campo obrigatório</div>
+                    <input type="text" v-model.trim="$v.nova_patente.logo.$model" class="form-control" id="patente.logo">
+                  </div>
+                  <div class="form-group">
+                    <label>Quantidade mínima de pontos</label>
+                    <div class="error" v-if="!$v.nova_patente.qtd_min.required">Campo obrigatório</div>
+                    <input type="number" v-model.trim="$v.nova_patente.qtd_min.$model" class="form-control" id="patente.qtd_min">
+                  </div>
+                  <button @click="addPatente($v)" class="btn" type="button">Salvar</button>
+                  <button @click="cleanFormularioPatente" class="btn" type="button">Limpar</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </body>
+
+    <script type="text/javascript">
+
+    $(document).ready(function() {
+
+      var jogadores = [];
+      if(localStorage.getItem("jogadores") == null){
+
+        localStorage.setItem("jogadores" , JSON.stringify([]));
+      }else{
+        jogadores = JSON.parse(localStorage.getItem("jogadores"))
+      }
+
+      var patentes = [];
+      if(localStorage.getItem("patentes") == null){
+
+        localStorage.setItem("patentes" , JSON.stringify([]));
+
+      }else{
+        patentes = JSON.parse(localStorage.getItem("patentes"));
+      }
+
+      var couples = [];
+      if(localStorage.getItem("couples") == null){
+
+        localStorage.setItem("couples" , JSON.stringify([]));
+
+      }else{
+         
+        couples = JSON.parse(localStorage.getItem("couples"));
+      }
+
+      var dados = {
+        "jogadores": jogadores, 
+        "novo_jogador" : {id: '', name: '', senha: '', dt_cadastro: '', qtd_dinheiro: '', qtd_pontos: '', dt_login: '', situacao: ''}, 
+        "patentes": patentes,
+        "nova_patente" : {id: '', cod: '', nome: '', cor: '', dt_cria: '', logo: '', qtd_min: ''},
+        "couples": couples,
+        "novo_couple": {id: '', jogador: '', patente: ''}
+      };
+
+      Vue.use(window.vuelidate.default);
+
+      const {
+          required,
+          minLength,
+          maxLength,
+          minValue,
+          maxValue
+      } = window.validators
+
+      Vue.filter('formataData', function (value) {                
+
+        var data = new Date(value);
+        data.setDate(data.getDate()+1);             
+        dia  = (data.getDate()).toString().padStart(2, '0'),
+        mes  = (data.getMonth()+1).toString().padStart(2, '0'),             
+        ano  = data.getFullYear();                
+        return dia+"/"+mes+"/"+ano;                
+      })
+
+      new Vue({ 
+        el: '#jogador', 
+        data: dados,
+        validations: {
+            novo_jogador: {
+              name: {
+                  required, 
+                  maxLength: maxLength(12)
+              },
+              senha: {
+                required,
+                minLength: minLength(4)
+              },
+              dt_cadastro: {
+                required
+              }, 
+              qtd_dinheiro: {
+                required
+              },
+              qtd_pontos: {
+                required
+              },
+              dt_login: {
+                required
+              },
+              situacao: {
+                required
+              }
+            }
+        },
+        methods: { 
+
+          status(validation) {
+                return {
+                    error: validation.$error,
+                    dirty: validation.$dirty
+                }
+            },
+
+            addJogador: function (v) {
+
+            if(!v.$invalid){
+
+              var jogador_indice = this.novo_jogador.id;
+              var jogador_name = this.novo_jogador.name;
+              var jogador_senha = this.novo_jogador.senha;
+              var jogador_dt_cadastro = this.novo_jogador.dt_cadastro;
+              var jogador_qtd_dinheiro = this.novo_jogador.qtd_dinheiro;
+              var jogador_qtd_pontos = this.novo_jogador.qtd_pontos;
+              var jogador_dt_login = this.novo_jogador.dt_login;
+              var jogador_situacao = this.novo_jogador.situacao;
+
+              if(isNaN(parseInt(jogador_indice))){
+
+                console.log(jogador_indice);
+
+                this.jogadores.push({name: jogador_name,
+                                senha: jogador_senha,
+                                dt_cadastro: jogador_dt_cadastro,
+                                qtd_dinheiro: jogador_qtd_dinheiro,
+                                qtd_pontos: jogador_qtd_pontos,
+                                dt_login: jogador_dt_login,
+                                situacao: jogador_situacao}
+                                );
+
+                alert('Novo Jogador cadastrado !');
+
+              }else{
+
+                this.jogadores[jogador_indice] = {name: jogador_name,
+                                senha: jogador_senha,
+                                dt_cadastro: jogador_dt_cadastro,
+                                qtd_dinheiro: jogador_qtd_dinheiro,
+                                qtd_pontos: jogador_qtd_pontos,
+                                dt_login: jogador_dt_login,
+                                situacao: jogador_situacao
+                                };
+
+                alert('Jogador alterado !');
+              }
+              localStorage.setItem("jogadores" , JSON.stringify(this.jogadores));
+              this.cleanFormularioJogador();
+            } else {
+
+              alert('Formulário incompleto!');
+            }
+          },
+
+          editJogador: function (param_index) {
+
+              this.novo_jogador.id = param_index;
+              this.novo_jogador.name = this.jogadores[param_index].name; 
+              this.novo_jogador.senha = this.jogadores[param_index].senha;
+              this.novo_jogador.dt_cadastro = this.jogadores[param_index].dt_cadastro;
+              this.novo_jogador.qtd_dinheiro = this.jogadores[param_index].qtd_dinheiro;
+              this.novo_jogador.qtd_pontos = this.jogadores[param_index].qtd_pontos;
+              this.novo_jogador.dt_login = this.jogadores[param_index].dt_login;
+              this.novo_jogador.situacao = this.jogadores[param_index].situacao;
+          },
+
+          remJogador: function(param_index){
+              
+              this.jogadores.splice(param_index, 1);
+
+              localStorage.setItem("jogadores" , JSON.stringify(this.jogadores));
+
+              alert('Removeu o jogador: ' + param_index);
+          },
+
+          cleanFormularioJogador: function() {
+
+            this.novo_jogador.id = '';
+            this.novo_jogador.name = ''; 
+            this.novo_jogador.senha = '';
+            this.novo_jogador.dt_cadastro = '';
+            this.novo_jogador.qtd_dinheiro = '';
+            this.novo_jogador.qtd_pontos = '';
+            this.novo_jogador.dt_login = '';
+            this.novo_jogador.situacao = '';
+          }
+        }
+      });
+      
+      new Vue ({
+        el: '#patente', 
+        data: dados,
+        validations: {
+            nova_patente: {
+
+              nome: {
+                required
+              },
+              cor: {
+                required
+              },
+              dt_cria: {
+                required,
+                maxValue: value => value < new Date().toISOString()
+              },
+              logo: {
+                required
+              },
+              qtd_min: {
+                required
+              }
+            }
+        },
+        methods: { 
+
+          status(validation) {
+                return {
+                    error: validation.$error,
+                    dirty: validation.$dirty
+                }
+            },
+
+          addPatente: function (v) {
+
+            if(!v.$invalid){
+
+              var patente_cod = this.nova_patente.cod;
+              var patente_nome = this.nova_patente.nome;
+              var patente_cor = this.nova_patente.cor;
+              var patente_dt_cria = this.nova_patente.dt_cria;
+              var patente_logo = this.nova_patente.logo;
+              var patente_qtd_min = this.nova_patente.qtd_min;
+
+              if(isNaN(parseInt(this.nova_patente.id))){
+                      var proximo_cod;
+                      if(this.patentes.length == 0){
+                          proximo_cod = 1;
+                      }else{
+                          proximo_cod = (parseInt(this.patentes[this.patentes.length-1].cod) + 1)
+                      }
+                      this.patentes.push({cod: proximo_cod, 
+                                      nome: patente_nome,
+                                      cor: patente_cor,
+                                      dt_cria: patente_dt_cria,
+                                      logo: patente_logo,
+                                      qtd_min: patente_qtd_min}
+                                      );
+
+                      alert('Nova patente cadastrada!');
+
+                  }else{
+                  
+                      this.patentes[this.nova_patente.id] = {cod: patente_cod,  
+                                      nome: patente_nome,
+                                      cor: patente_cor,
+                                      dt_cria: patente_dt_cria,
+                                      logo: patente_logo,
+                                      qtd_min: patente_qtd_min
+                      }; 
+                      alert('Patente alterada!');
+                    
+                  }
+                  localStorage.setItem("patentes" , JSON.stringify(this.patentes));
+                  
+                  this.cleanFormularioPatente();
+            } else {
+
+              alert("Formulário incompleto!");
+            }
+          },
+
+          editPatente: function (param_index) {
+
+              this.nova_patente.id = param_index;
+              this.nova_patente.cod = this.patentes[param_index].cod;
+              this.nova_patente.nome = this.patentes[param_index].nome;
+              this.nova_patente.cor = this.patentes[param_index].cor;
+              this.nova_patente.dt_cria = this.patentes[param_index].dt_cria;
+              this.nova_patente.logo = this.patentes[param_index].logo;
+              this.nova_patente.qtd_min = this.patentes[param_index].qtd_min;                          
+          },
+
+          remPatente: function(param_index){
+
+              this.patentes.splice(param_index, 1);
+
+              localStorage.setItem("patentes" , JSON.stringify(this.patentes));
+
+              alert('Removeu a patente: ' + param_index);
+          },
+          
+          cleanFormularioPatente: function() {
+
+              this.nova_patente.cod = '';
+              this.nova_patente.nome = '';
+              this.nova_patente.cor = '';
+              this.nova_patente.dt_cria = '';
+              this.nova_patente.logo = '';
+              this.nova_patente.qtd_min = '';
+          }
+        }
+      })
+
+      new Vue({ 
+        el: '#menu', 
+        data: dados,
+        validations: {
+            novo_couple: {
+
+              jogador: {
+                required
+              },
+              patente: {
+                required
+              }
+            }
+        },
+        methods: { 
+
+          status(validation) {
+              return {
+                  error: validation.$error,
+                  dirty: validation.$dirty
+              }
+          },
+
+          addCouple: function (v) {
+
+            if(!v.$invalid){
+
+              var couple_jogador = this.novo_couple.jogador;
+              var couple_patente = this.novo_couple.patente;
+
+              if(isNaN(parseInt(this.novo_couple.id))){
+                      this.couples.push({jogador: couple_jogador, 
+                                      patente: couple_patente}
+                                      );
+
+                      alert('Novo jogador-patente cadastrado!');
+
+                  }else{
+                  
+                      this.couples[this.novo_couple.id] = {jogador: couple_jogador,  
+                                      patente: couple_patente
+                      }; 
+                      alert('Jogador-patente alterada!');
+                    
+                  }
+                  localStorage.setItem("couples" , JSON.stringify(this.couples));
+                  
+                  this.cleanFormularioCouple();
+            }
+          },
+
+          editCouple: function (param_index) {
+
+          this.novo_couple.id = param_index;
+          this.novo_couple.jogador = this.couples[param_index].jogador; 
+          this.novo_couple.patente = this.couples[param_index].patente; 
+          },
+
+          remCouple: function(param_index){
+
+          this.couples.splice(param_index, 1);
+
+          localStorage.setItem("couples" , JSON.stringify(this.couples));
+
+          alert('Removeu o couple: ' + param_index);
+          },
+
+          cleanFormularioCouple: function() {
+
+            this.novo_couple.id = '';
+            this.novo_couple.jogador = '';
+            this.novo_couple.patente = '';
+            }
+        }
+      });
+
+    });
+    </script>
+</html>
