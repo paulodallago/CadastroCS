@@ -124,11 +124,6 @@
                     <input type="password" v-model.trim="$v.novo_jogador.senha.$model" class="form-control" id="jogador.senha">
                   </div>
                   <div class="form-group">
-                    <label>Data de cadastro</label>
-                    <div class="error" v-if="!$v.novo_jogador.dt_cadastro.required">Campo obrigatório</div>
-                    <input type="date" v-model.trim="$v.novo_jogador.dt_cadastro.$model"dt_cadastro class="form-control" id="jogador.dt_cadastro">
-                  </div>
-                  <div class="form-group">
                     <label>Quantidade de dinheiro</label>
                     <div class="error" v-if="!$v.novo_jogador.qtd_dinheiro.required">Campo obrigatório</div>
                     <input type="number" v-model.trim="$v.novo_jogador.qtd_dinheiro.$model" class="form-control" id="jogador.qtd_dinheiro" step="0.01">
@@ -139,14 +134,8 @@
                     <input type="number" v-model.trim="$v.novo_jogador.qtd_pontos.$model" class="form-control" id="jogador.qtd_pontos">
                   </div>
                   <div class="form-group">
-                    <label>Data do último login</label>
-                    <div class="error" v-if="!$v.novo_jogador.dt_login.required">Campo obrigatório</div>
-                    <input type="date" v-model.trim="$v.novo_jogador.dt_login.$model" class="form-control" id="jogador.dt_login">
-                  </div>
-                  <div class="form-group">
                     <label>Situação</label>
-                    <div class="error" v-if="!$v.novo_jogador.situacao.required">Campo obrigatório</div>
-                    <input type="text" v-model.trim="$v.novo_jogador.situacao.$model" class="form-control" id="jogador.situacao" maxlength="1">
+                    <input type="checkbox" v-model.trim="$v.novo_jogador.situacao.$model" class="form-control check" id="jogador.situacao" maxlength="1">
                   </div>
 
                   <button @click="addJogador($v)" class="btn" type="button">Salvar</button>

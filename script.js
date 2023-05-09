@@ -36,6 +36,8 @@ $(document).ready(function() {
       "novo_couple": {id: '', jogador: '', patente: ''}
     };
 
+    var date = new Date;
+
     Vue.use(window.vuelidate.default);
 
     const {
@@ -49,7 +51,7 @@ $(document).ready(function() {
     Vue.filter('formataData', function (value) {                
 
       var data = new Date(value);
-      data.setDate(data.getDate()+1);             
+      data.setDate(data.getDate());             
       dia  = (data.getDate()).toString().padStart(2, '0'),
       mes  = (data.getMonth()+1).toString().padStart(2, '0'),             
       ano  = data.getFullYear();                
@@ -69,20 +71,14 @@ $(document).ready(function() {
               required,
               minLength: minLength(4)
             },
-            dt_cadastro: {
-              required
-            }, 
             qtd_dinheiro: {
               required
             },
             qtd_pontos: {
               required
             },
-            dt_login: {
-              required
-            },
             situacao: {
-              required
+              
             }
           }
       },
@@ -102,11 +98,11 @@ $(document).ready(function() {
             var jogador_indice = this.novo_jogador.id;
             var jogador_name = this.novo_jogador.name;
             var jogador_senha = this.novo_jogador.senha;
-            var jogador_dt_cadastro = this.novo_jogador.dt_cadastro;
+            var jogador_dt_cadastro = date;
             var jogador_qtd_dinheiro = this.novo_jogador.qtd_dinheiro;
             var jogador_qtd_pontos = this.novo_jogador.qtd_pontos;
-            var jogador_dt_login = this.novo_jogador.dt_login;
-            var jogador_situacao = this.novo_jogador.situacao;
+            var jogador_dt_login = date;
+            var jogador_situacao = situacaoBool;
 
             if(isNaN(parseInt(jogador_indice))){
 
@@ -127,7 +123,6 @@ $(document).ready(function() {
 
               this.jogadores[jogador_indice] = {name: jogador_name,
                               senha: jogador_senha,
-                              dt_cadastro: jogador_dt_cadastro,
                               qtd_dinheiro: jogador_qtd_dinheiro,
                               qtd_pontos: jogador_qtd_pontos,
                               dt_login: jogador_dt_login,

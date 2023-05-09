@@ -1,35 +1,34 @@
 body {
-
     margin: 0;
 }
 
 nav, div {
-
     margin-left: 5px;
 }
 
 .btn {
-
     background-color: #222222;
     color: white;
 }
 
 .btn:hover {
-
     color: rgb(175, 175, 175);
 } 
 
 .btn:focus {
-
     color: rgb(99, 97, 97);
 } 
 
 .form-control {
-
     width: 50%;
 }
 
 .error {
-
     color: red;
+}
+
+.check {
+    width: 2vw;
+    height: 2vw;
+    text-align: left;
 }
